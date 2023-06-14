@@ -18,7 +18,7 @@ It also reconstructs (or unpatchifies) from arbitrary patches which allows for m
 import xarray as xr
 import torch
 import itertools
-from oceanbench import XRPatcher
+from xrpatcher import XRPatcher
 
 
 # Easy Integration with PyTorch Datasets (and DataLoaders)
