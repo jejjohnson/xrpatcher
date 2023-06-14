@@ -7,8 +7,12 @@ import xarray as xr
 from tqdm import tqdm
 
 from xrpatcher._src.exceptions import IncompleteScanConfiguration
-from xrpatcher._src.utils import (check_lists_subset, get_dims_xrda,
-                                  get_patches_size, get_slices)
+from xrpatcher._src.utils import (
+    check_lists_subset,
+    get_dims_xrda,
+    get_patches_size,
+    get_slices,
+)
 
 
 class XRDAPatcher:
@@ -23,15 +27,15 @@ class XRDAPatcher:
         - have for each dim of patch_dim (size(dim) - patch_dim(dim)) divisible by stride(dim)
         (optional warning)
     """
-    
+
     def __init__(
-            self, 
-            da: xr.DataArray,
-            patches: tp.Optional[tp.Dict[str, int]]=None,
-            strides: tp.Optional[tp.Dict[str, int]]=None,
-            domain_limits: tp.Optional[tp.Dict]=None,
-            check_full_scan: bool=False,
-        ):
+        self,
+        da: xr.DataArray,
+        patches: tp.Optional[tp.Dict[str, int]] = None,
+        strides: tp.Optional[tp.Dict[str, int]] = None,
+        domain_limits: tp.Optional[tp.Dict] = None,
+        check_full_scan: bool = False,
+    ):
         """
         Args:
             da (xr.DataArray): xarray datarray to be referenced during the iterations
@@ -43,7 +47,7 @@ class XRDAPatcher:
                 to select for patch extractions
             check_full_scan bool: if True raise an error if the whole domain is
                 not scanned by the patch size stride combination
-                
+
         Attributes:
             da (xr.DataArray): xarray datarray to be referenced during the iterations
             patches (OrderedDict): dict of da dimension to size of a patch
@@ -57,17 +61,17 @@ class XRDAPatcher:
             da_dims = get_dims_xrda(da)
             check_lists_subset(list(domain_limits.keys()), list(da_dims.keys()))
             da = da.sel(**domain_limits)
-        
+
         self.da = da
 
         self.da_dims = get_dims_xrda(da)
-        
+
         self.da_size, self.patches, self.strides = get_patches_size(
             dims=self.da_dims,
             patches=patches if patches is not None else {},
             strides=strides if strides is not None else {},
         )
-        
+
         if check_full_scan:
             for dim in self.patches:
                 if (self.da_dims[dim] - self.patches[dim]) % self.strides[dim] != 0:
@@ -80,7 +84,7 @@ class XRDAPatcher:
                     soln = (self.da_dims[dim] - self.patches[dim]) / self.strides[dim]
                     msg += f"= {soln}"
                     raise IncompleteScanConfiguration(msg)
-        
+
     def __repr__(self) -> str:
         msg = "XArray Patcher"
         msg += "\n=============="
@@ -89,7 +93,7 @@ class XRDAPatcher:
         msg += f"\nStrides:        {self.strides}"
         msg += f"\nNum Items:    {self.da_size}"
         return msg
-    
+
     def __str__(self) -> str:
         msg = "XArray Patcher"
         msg += "\n=============="
@@ -98,43 +102,40 @@ class XRDAPatcher:
         msg += f"\nStrides:        {self.strides}"
         msg += f"\nNum Items:    {self.da_size}"
         return msg
-    
+
     @property
     def coord_names(self) -> tp.List[str]:
         return list(self.da_dims.keys())
-    
+
     def __len__(self):
         return np.prod(list(self.da_size.values()))
-    
+
     def __iter__(self):
         for i in range(len(self)):
             yield self[i]
-    
+
     def __getitem__(self, item):
 
         slices = get_slices(
-            idx=item,
-            da_size=self.da_size,
-            patches=self.patches,
-            strides=self.strides
+            idx=item, da_size=self.da_size, patches=self.patches, strides=self.strides
         )
-                        
+
         return self.da.isel(**slices)
-    
+
     def get_coords(self) -> tp.List[xr.DataArray]:
-        """"Returns a list of xr.DataArray's with the
+        """ "Returns a list of xr.DataArray's with the
         coordinate values that correspond to each item.
         """
         coords = []
         for i in range(len(self)):
             coords.append(self[i].coords.to_dataset()[list(self.patches)])
         return coords
-    
+
     def reconstruct(
         self,
         items: tp.Iterable,
-        dims_labels: tp.Optional[tp.Iterable[str]]=None, 
-        weight=None
+        dims_labels: tp.Optional[tp.Iterable[str]] = None,
+        weight=None,
     ) -> xr.DataArray:
         """Reconstructs based on a list of patches, e.g. the output of
         a dataloader.
@@ -157,23 +158,23 @@ class XRDAPatcher:
             rec_da (xr.DataArray): the reconstructed xr.DataArray that corresponds to
                 to the original array of the corresponding requested coordinates.
         """
-        
+
         item_shape = items[0].shape
         num_items = len(item_shape)
-        
+
         # get coordinate labels
         coords = self.get_coords()
         coords_labels = list(coords[0].dims.keys())
-        
+
         # assume the items are the same as the coordinates
         if dims_labels is None:
             dims_labels = [coords_labels[i] for i in range(len(coords_labels))]
-        
+
         num_dim_labels = len(dims_labels)
 
         # add any extra dimensions not specified
         if num_dim_labels < num_items:
-            new_dims  = [f"v{i+1}" for i in range(num_items - num_dim_labels)]
+            new_dims = [f"v{i+1}" for i in range(num_items - num_dim_labels)]
             dims_labels = dims_labels + new_dims
             num_dim_labels = len(dims_labels)
 
@@ -183,17 +184,19 @@ class XRDAPatcher:
         msg += f"\nNum Labels: {num_dim_labels} \nNum Items: {num_items}"
 
         assert num_dim_labels == num_items, msg
-        
+
         # check for subset of coordinate arrays
         coords_labels = set(dims_labels).intersection(coords_labels)
 
         # check_lists_subset(coords_labels, dims_labels)
         all_items_shape = dict(zip(dims_labels, item_shape))
 
-        patches = {ikey: ivalue for ikey, ivalue in self.patches.items() if ikey in dims_labels}
+        patches = {
+            ikey: ivalue for ikey, ivalue in self.patches.items() if ikey in dims_labels
+        }
         patch_values = list(patches.values())
         patch_names = list(patches.keys())
-        
+
         msg = "No Coordinates to merge..."
         msg += f"\nDims: {dims_labels}"
         msg += f"\nCoords: {list(coords[0].dims.keys())}"
@@ -223,7 +226,7 @@ class XRDAPatcher:
         das = [
             xr.DataArray(it, dims=dims_labels, coords=co[coords_labels].coords)
             for it, co in zip(items, coords)
-                ]
+        ]
 
         msg = "New Data Array is not the same size as items"
         msg += "or not the same value"
@@ -232,17 +235,14 @@ class XRDAPatcher:
         assert len(das[0].shape) == len(all_items_shape), msg
         assert set(das[0].shape) == set(all_items_shape.values()), msg
 
-        # get new shape from 
+        # get new shape from
         new_shape = {
-            idim: self.da[idim].shape[0] if idim in coords_labels
-            else item_shape[i]
-            for i, idim in enumerate(dims_labels) 
+            idim: self.da[idim].shape[0] if idim in coords_labels else item_shape[i]
+            for i, idim in enumerate(dims_labels)
         }
         coords = {d: self.da[d] for d in das[0].coords}
         rec_da = xr.DataArray(
-            np.zeros([*new_shape.values()]),
-            dims=dims_labels,
-            coords=coords
+            np.zeros([*new_shape.values()]), dims=dims_labels, coords=coords
         )
 
         count_da = xr.zeros_like(rec_da)
@@ -254,4 +254,3 @@ class XRDAPatcher:
 
         rec_da.attrs = self.da.attrs
         return rec_da / count_da
-    

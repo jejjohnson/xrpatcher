@@ -1,7 +1,11 @@
 import pytest
 
-from xrpatcher._src.utils import (check_lists_equal, check_lists_subset,
-                                  get_patches_size, update_dict_keys)
+from xrpatcher._src.utils import (
+    check_lists_equal,
+    check_lists_subset,
+    get_patches_size,
+    update_dict_keys,
+)
 
 
 @pytest.mark.parametrize(

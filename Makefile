@@ -57,7 +57,7 @@ precommit: ## Run recommit
 		@printf "\033[1;34mFinished!\033[0m\n\n"
 
 ##@ JupyterBook
-	
+
 jb_build: ## Build Jupyterbook
 	rm -rf jbook/_build/
 	jupyter-book build jbook --all

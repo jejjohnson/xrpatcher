@@ -1,6 +1,5 @@
 from functools import reduce
-from typing import (Dict, Iterable, List, NamedTuple, Optional, OrderedDict,
-                    Tuple)
+from typing import Dict, Iterable, List, NamedTuple, Optional, OrderedDict, Tuple
 
 import numpy as np
 import xarray as xr
@@ -115,27 +114,21 @@ def get_xrda_size(
     dim_size = {}
 
     for dim in patches:
-        dim_size[dim] = max(
-            (da_dims[dim] - patches[dim]) // strides[dim] + 1, 0
-        )
+        dim_size[dim] = max((da_dims[dim] - patches[dim]) // strides[dim] + 1, 0)
 
     return dim_size
 
 
 def get_patches_size(
     dims: Dict[str, int], patches: Dict[str, int], strides: Dict[str, int]
-) -> Tuple[
-    OrderedDict[str, int], OrderedDict[str, int], OrderedDict[str, int]
-]:
+) -> Tuple[OrderedDict[str, int], OrderedDict[str, int], OrderedDict[str, int]]:
     patches = update_dict_keys(dims, patches, default=True)
     strides = update_dict_keys(dims, strides, default=False)
 
     dim_size = OrderedDict()
 
     for idim in patches:
-        dim_size[idim] = max(
-            (dims[idim] - patches[idim]) // strides[idim] + 1, 0
-        )
+        dim_size[idim] = max((dims[idim] - patches[idim]) // strides[idim] + 1, 0)
 
     return dim_size, patches, strides
 

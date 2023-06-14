@@ -14,7 +14,7 @@
 ---
 ## About
 
-This is a lightweight package to create patch *items* from xarray data structures. 
+This is a lightweight package to create patch *items* from xarray data structures.
 This makes it more compatible with machine learning datasets and dataloaders like PyTorch or TensorFlow.
 The user simply needs to define the patch dimensions and the stride dimensions and you are good to go!
 It also reconstructs (or unpatchifies) from arbitrary patches which allows for more robust inference procedures, e.g. to account for border effects from CNN models.
@@ -49,7 +49,7 @@ class XRTorchDataset(torch.utils.data.Dataset):
         )
     def __len__(self) -> int:
         return len(self.batcher)
-    
+
 # load demo dataset
 data = xr.tutorial.load_dataset("eraint_uvz")
 
@@ -85,7 +85,7 @@ train_dl = torch.utils.data.DataLoader(train_ds, batch_size=10, shuffle=False)
 test_dl = torch.utils.data.DataLoader(test_ds, batch_size=10, shuffle=False)
 ```
 
-### Extended Example 
+### Extended Example
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
 
 We have an extended example where we demonstrate some of the reconstruction abilities.
