@@ -75,7 +75,7 @@ test_patcher = XRDAPatcher(
 We can directly install it via pip from the
 
 ```bash
-pip install "git+https://github.com/jejjohnson/xrpatcher.git"
+pip install xrpatcher
 ```
 
 ### Cloning
