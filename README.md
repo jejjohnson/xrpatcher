@@ -12,7 +12,6 @@
 * J. Emmanuel Johnson
 * Quentin Febvre
 
----
 ## About
 
 This is a lightweight package to create patch *items* from xarray data structures.
@@ -20,7 +19,7 @@ This makes it more compatible with machine learning datasets and dataloaders lik
 The user simply needs to define the patch dimensions and the stride dimensions and you are good to go!
 It also reconstructs (or unpatchifies) from arbitrary patches which allows for more robust inference procedures, e.g. to account for border effects from CNN models.
 
----
+
 ## ⏩ Examples<a id="examples"></a>
 
 ### Quick Example
@@ -56,13 +55,14 @@ test_patcher = XRDAPatcher(
 )
 ```
 
-### Extended Example
+---
+### Extended Examples
 
-**Example 1: Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/patching_cc.ipynb)
+**Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/patching_cc.ipynb)
 
 > We have an extended example where we demonstrate some of the ways to do the reconstruction!
 
-**Example 2: PyTorch Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
+**PyTorch Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
 
 > We have an extended example where we demonstrate some nifty PyTorch Integration.
 
