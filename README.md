@@ -1,9 +1,10 @@
 # XRPatcher - A ML-Oriented Generic Patcher for `xarray` Data Structures
 
 [**Installation**](#installation)
-|[**Examples**](#examples)
+| [**Examples**](#examples)
 
 ![pyver](https://img.shields.io/badge/python-3.9%203.10%203.11_-red)
+[![PyPI version](https://badge.fury.io/py/xrpatcher.svg)](https://badge.fury.io/py/xrpatcher)
 ![codestyle](https://img.shields.io/badge/codestyle-black-black)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jejjohnson/xrpatcher)
