@@ -41,7 +41,7 @@ class XRTorchDataset(torch.utils.data.Dataset):
         return len(self.batcher)
     
 # load demo dataset
-data = xr.tutorial.load_dataset("eraint_uvz")
+data = xr.tutorial.load_dataset("eraint_uvz").u[..., :240, :360]
 
 # Instantiate the patching logic for training
 patches = dict(longitude=30, latitude=30)
