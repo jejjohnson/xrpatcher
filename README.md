@@ -26,29 +26,7 @@ It also reconstructs (or unpatchifies) from arbitrary patches which allows for m
 
 ```python
 import xarray as xr
-import torch
-import itertools
 from xrpatcher import XRDAPatcher
-
-
-# Easy Integration with PyTorch Datasets (and DataLoaders)
-class XRTorchDataset(torch.utils.data.Dataset):
-    def __init__(self, batcher: XRDAPatcher, item_postpro=None):
-        self.batcher = batcher
-        self.postpro = item_postpro
-    def __getitem__(self, idx: int) -> torch.Tensor:
-        item = self.batcher[idx].load().values
-        if self.postpro:
-            item = self.postpro(item)
-        return item
-    def reconstruct_from_batches(
-            self, batches: list(torch.Tensor), **rec_kws
-        ) -> xr.Dataset:
-        return self.batcher.reconstruct(
-            [*itertools.chain(*batches)], **rec_kws
-        )
-    def __len__(self) -> int:
-        return len(self.batcher)
 
 # load demo dataset
 data = xr.tutorial.load_dataset("eraint_uvz")
@@ -75,14 +53,6 @@ test_patcher = XRDAPatcher(
     strides=strides,        # Overlap
     check_full_scan=True    # check no extra dimensions
 )
-
-# instantiate PyTorch DataSet
-train_ds = XRTorchDataset(train_patcher, item_postpro=TrainingItem._make)
-test_ds = XRTorchDataset(test_patcher, item_postpro=TrainingItem._make)
-
-# instantiate PyTorch DataLoader
-train_dl = torch.utils.data.DataLoader(train_ds, batch_size=10, shuffle=False)
-test_dl = torch.utils.data.DataLoader(test_ds, batch_size=10, shuffle=False)
 ```
 
 ### Extended Example
