@@ -1,3 +1,3 @@
-from xrpatcher._src.base import XRDABatcher
+from xrpatcher._src.base import XRDAPatcher
 
-__all__ = ["XRDABatcher"]
+__all__ = ["XRDAPatcher"]

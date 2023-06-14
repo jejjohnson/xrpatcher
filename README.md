@@ -18,12 +18,12 @@ It also reconstructs (or unpatchifies) from arbitrary patches which allows for m
 import xarray as xr
 import torch
 import itertools
-from xrpatcher import XRPatcher
+from xrpatcher import XRDAPatcher
 
 
 # Easy Integration with PyTorch Datasets (and DataLoaders)
 class XRTorchDataset(torch.utils.data.Dataset):
-    def __init__(self, batcher: XRPatcher, item_postpro=None):
+    def __init__(self, batcher: XRDAPatcher, item_postpro=None):
         self.batcher = batcher
         self.postpro = item_postpro
     def __getitem__(self, idx: int) -> torch.Tensor:
@@ -45,7 +45,7 @@ data = xr.tutorial.load_dataset("eraint_uvz")
 
 # Instantiate the patching logic for training
 patches = dict(longitude=30, latitude=30)
-train_patcher = XRPatcher(
+train_patcher = XRDAPatcher(
     da=data,
     patches=patches,
     strides=patches,        # No Overlap
@@ -56,7 +56,7 @@ train_patcher = XRPatcher(
 patches = dict(longitude=30, latitude=30)
 strides = dict(longitude=5, latitude=5)
 
-test_patcher = XRPatcher(
+test_patcher = XRDAPatcher(
     da=data,
     patches=patches,
     strides=strides,        # Overlap
