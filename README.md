@@ -93,7 +93,7 @@ test_dl = torch.utils.data.DataLoader(test_ds, batch_size=10, shuffle=False)
 
 **Example 2: PyTorch Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
 
-We have an extended example where we demonstrate some nifty PyTorch Integration.
+> We have an extended example where we demonstrate some nifty PyTorch Integration.
 
 ---
 
