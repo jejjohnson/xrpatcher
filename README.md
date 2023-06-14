@@ -1,5 +1,13 @@
 # XRPatcher - A ML-Oriented Generic Patcher for `xarray` Data Structures
 
+[**Installation**](#installation)
+|[**Examples**](#examples)
+
+![pyver](https://img.shields.io/badge/python-3.9%203.10%203.11_-red)
+![codestyle](https://img.shields.io/badge/codestyle-black-black)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jejjohnson/xrpatcher)
+
 * J. Emmanuel Johnson
 * Quentin Febvre
 
@@ -12,7 +20,9 @@ The user simply needs to define the patch dimensions and the stride dimensions a
 It also reconstructs (or unpatchifies) from arbitrary patches which allows for more robust inference procedures, e.g. to account for border effects from CNN models.
 
 ---
-## Example
+## ⏩ Examples<a id="examples"></a>
+
+### Quick Example
 
 ```python
 import xarray as xr
@@ -75,9 +85,14 @@ train_dl = torch.utils.data.DataLoader(train_ds, batch_size=10, shuffle=False)
 test_dl = torch.utils.data.DataLoader(test_ds, batch_size=10, shuffle=False)
 ```
 
+### Extended Example 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
+
+We have an extended example where we demonstrate some of the reconstruction abilities.
+
 ---
 
-## Installation Guide
+## 🛠️ Installation<a id="installation"></a>
 
 
 ### pip
