@@ -3,7 +3,7 @@ name = "xrpatcher"
 description = "A ML-oriented generic patcher for xarray data structures."
 authors = [
     "J. Emmanuel Johnson <jemanjohnson34@gmail.com>",
-    "Quentin Febvre"
+    "Quentin Febvre <quentin.febvre@gmail.com>"
     ]
 version = "0.0.1"
 license = "MIT"
@@ -16,11 +16,10 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.9",
-    "Operating System :: MACOS/Linux",
     "Natural Language :: English",
     "License :: OSI Approved :: MIT License",
     "Intended Audience :: Science/Research",
-    "Development Status :: 2 - Pre-Alpha copy",
+    "Development Status :: 2 - Pre-Alpha"
 
 ]
 
