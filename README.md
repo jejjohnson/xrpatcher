@@ -67,7 +67,7 @@ test_patcher = XRDAPatcher(
 
 **Example 3: PyTorch Integration Concatenate Multiple domain** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1lhWN8gy4D_hCzKFV4dRNmzhqCvlwuqpz?usp=sharing)
 
-> We demonstrate in this example how this tool can be used to create more complex dataloading like jointly training on separate region
+> We demonstrate in this example how this tool can be used to create more complex dataloading like jointly training on separate regions
 
 ---
 
