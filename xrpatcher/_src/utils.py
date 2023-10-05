@@ -106,6 +106,7 @@ def update_dict_keys(
 def get_xrda_size(
     da: xr.DataArray, patches: Dict[str, int], strides: Dict[str, int]
 ) -> OrderedDict[str, int]:
+
     da_dims = get_dims_xrda(da)
 
     check_lists_equal(list(da_dims.keys()), list(patches.keys()))
@@ -122,6 +123,7 @@ def get_xrda_size(
 def get_patches_size(
     dims: Dict[str, int], patches: Dict[str, int], strides: Dict[str, int]
 ) -> Tuple[OrderedDict[str, int], OrderedDict[str, int], OrderedDict[str, int]]:
+
     patches = update_dict_keys(dims, patches, default=True)
     strides = update_dict_keys(dims, strides, default=False)
 
@@ -134,10 +136,7 @@ def get_patches_size(
 
 
 def get_slices(
-    idx: int,
-    da_size: Dict[str, int],
-    patches: Dict[str, int],
-    strides: Dict[str, int],
+    idx: int, da_size: Dict[str, int], patches: Dict[str, int], strides: Dict[str, int]
 ) -> OrderedDict[str, slice]:
     slices = {
         dim: slice(strides[dim] * idx, strides[dim] * idx + patches[dim])
