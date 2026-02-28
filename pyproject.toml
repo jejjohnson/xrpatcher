@@ -69,3 +69,12 @@ python-version = "3.12"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--cov=xrpatcher --cov-report=term-missing --cov-report=xml:coverage.xml"
+
+[tool.coverage.run]
+source = ["xrpatcher"]
+omit = ["tests/*", "examples/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
