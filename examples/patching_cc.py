@@ -1,5 +1,5 @@
 # %% [markdown]
-# [![<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/patching_cc.py)
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/patching_cc.py)
 
 # %% [markdown]
 # # XArrayDataset
