@@ -144,15 +144,15 @@ class XRDAPatcher:
         Args:
             items (List[np.ndarray]): a list of np.ndarrays with arbitrary dimensions
                 where at least one dimension matches the patch dimensions
-            dims_label (List[str]): a list of dimension names for the patches.
+            dims_labels (List[str]): a list of dimension names for the patches.
                 If explicit, it will match all names that correspond with the patch
                 dims. If missing, it will infer based on the shapes (use with
                 caution). Any extra patch dims will be added dimensions for the
                 reconstructed xr.DataArray.
             weight (np.ndarray): the tensor which is the same size as the patch
                 dimensions requested to be reconstructed. If not specified and the
-                dims_label is specific, it will be constructed based on the matching
-                dimensions specified. If not specified and the dims_label is not
+                dims_labels is specific, it will be constructed based on the matching
+                dimensions specified. If not specified and the dims_labels is not
                 specified, it will be inferred based on the first N dimensions that
                 correspond with the patch dimensions. The default is that all
                 overlapping patches will be averaged with ones.
