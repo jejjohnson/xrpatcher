@@ -3,10 +3,10 @@
 [**Installation**](#installation)
 | [**Examples**](#examples)
 
-![pyver](https://img.shields.io/badge/python-3.9%203.10%203.11_-red)
+![pyver](https://img.shields.io/badge/python-3.12%203.13-red)
 [![PyPI version](https://badge.fury.io/py/xrpatcher.svg)](https://badge.fury.io/py/xrpatcher)
-![codestyle](https://img.shields.io/badge/codestyle-black-black)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
+![codestyle](https://img.shields.io/badge/codestyle-ruff-black)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jejjohnson/xrpatcher)
 
 * J. Emmanuel Johnson
@@ -58,15 +58,15 @@ test_patcher = XRDAPatcher(
 ---
 ### Extended Examples
 
-**Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/patching_cc.ipynb)
+**Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/patching_cc.py)
 
 > We have an extended example where we demonstrate some of the ways to do the reconstruction!
 
-**PyTorch Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/pytorch_integration.ipynb)
+**PyTorch Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
 
 > We have an extended example where we demonstrate some nifty PyTorch Integration.
 
-**Example 3: PyTorch Integration Concatenate Multiple domain** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/notebooks/xrpatcher_concat_torch_dataloading.ipynb)
+**Example 3: PyTorch Integration Concatenate Multiple domain** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/xrpatcher_concat_torch_dataloading.py)
 
 > We demonstrate in this example how this tool can be used to create more complex dataloading like jointly training on separate regions
 
@@ -74,47 +74,26 @@ test_patcher = XRDAPatcher(
 
 ## 🛠️ Installation<a id="installation"></a>
 
-
 ### pip
-
-We can directly install it via pip from the
 
 ```bash
 pip install xrpatcher
 ```
 
-### Cloning
+### uv
 
-We can also clone the git repository
+```bash
+uv add xrpatcher
+```
+
+### Development installation
+
+Clone the repository and install with all dev dependencies using uv:
 
 ```bash
 git clone https://github.com/jejjohnson/xrpatcher.git
 cd xrpatcher
-```
-
-#### Conda Environment (RECOMMENDED)
-
-We use conda/mamba as our package manager. To install from the provided environment files
-run the following command.
-
-```bash
-mamba env create -n environment.yaml
-```
-
-#### poetry
-
-The easiest way to get started is to simply use the poetry package which installs all necessary dev packages as well
-
-```bash
-poetry install
-```
-
-#### pip
-
-We can also install via `pip` as well
-
-```bash
-pip install .
+uv sync --all-groups
 ```
 
 ---

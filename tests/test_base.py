@@ -1,10 +1,12 @@
-from typing import Literal
-import pytest
-from xrpatcher._src.base import XRDAPatcher
-import numpy as np
-from xarray_dataclasses import Data, Name, Coord, asdataarray
 from dataclasses import dataclass
+from typing import Literal
+
+import numpy as np
+import pytest
 from einops import repeat
+from xarray_dataclasses import Coord, Data, Name, asdataarray
+
+from xrpatcher._src.base import XRDAPatcher
 
 
 RNG = np.random.RandomState(seed=123)
