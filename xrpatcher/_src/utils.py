@@ -1,27 +1,25 @@
-from functools import reduce
-from typing import Dict, Iterable, List, NamedTuple, Optional, OrderedDict, Tuple
+from collections import OrderedDict
 
 import numpy as np
 import xarray as xr
-from tqdm import tqdm
 
 
-def check_lists_equal(list_1: List, list_2: List):
+def check_lists_equal(list_1: list, list_2: list):
     msg = f"Lists not equal...: \n{list_1}\n{list_2}"
     assert sorted(list_1) == sorted(list_2), msg
 
 
-def check_lists_subset(list_1: List, list_2: List):
+def check_lists_subset(list_1: list, list_2: list):
     msg = f"Lists not subset...: \n{list_1}\n{list_2}"
     assert set(list_1) <= set(list_2), msg
 
 
-def get_dims_xrda(da: xr.DataArray) -> Dict[str, int]:
-    return OrderedDict(zip(da.dims, da.shape))
+def get_dims_xrda(da: xr.DataArray) -> dict[str, int]:
+    return OrderedDict(zip(da.dims, da.shape, strict=True))
 
 
 def update_dict_xdims(
-    da: xr.DataArray, dims: Dict = {}, default_size: bool = True
+    da: xr.DataArray, dims: dict | None = None, default_size: bool = True
 ) -> OrderedDict:
     """Updates a dims dictionary based on an xr.DataArray.
     This is useful when ensuring the dims dictionary has the same
@@ -36,7 +34,7 @@ def update_dict_xdims(
 
     Args:
         da (xr.DataArray): the xr.DataArray with the dimensions
-        dims (Optional[Dict]): a dictionary of dims. Defaults to {}.
+        dims (Optional[Dict]): a dictionary of dims. Defaults to None.
         default_size (Optional[bool]): determines which value to choose
           if the xr.DataArray has a dimension that isn't in the dims
           dictionary. True means that we use the value from the
@@ -48,6 +46,8 @@ def update_dict_xdims(
           (and maybe values) as the xr.DataArray dims and any extra keys
           specified in the dims.
     """
+    if dims is None:
+        dims = {}
     update = OrderedDict()
 
     for idim in da.dims:
@@ -64,7 +64,7 @@ def update_dict_xdims(
 
 
 def update_dict_keys(
-    source: Dict[str, int], new: Dict[str, int], default: bool = True
+    source: dict[str, int], new: dict[str, int], default: bool = True
 ) -> OrderedDict[str, int]:
     """Updates new dictionary with keys from source
 
@@ -87,8 +87,8 @@ def update_dict_keys(
 
     update = OrderedDict()
 
-    for ikey in source.keys():
-        if ikey not in new.keys():
+    for ikey in source:
+        if ikey not in new:
             if default:
                 update[ikey] = source[ikey]
             else:
@@ -104,7 +104,7 @@ def update_dict_keys(
 
 
 def get_xrda_size(
-    da: xr.DataArray, patches: Dict[str, int], strides: Dict[str, int]
+    da: xr.DataArray, patches: dict[str, int], strides: dict[str, int]
 ) -> OrderedDict[str, int]:
     da_dims = get_dims_xrda(da)
 
@@ -120,8 +120,8 @@ def get_xrda_size(
 
 
 def get_patches_size(
-    dims: Dict[str, int], patches: Dict[str, int], strides: Dict[str, int]
-) -> Tuple[OrderedDict[str, int], OrderedDict[str, int], OrderedDict[str, int]]:
+    dims: dict[str, int], patches: dict[str, int], strides: dict[str, int]
+) -> tuple[OrderedDict[str, int], OrderedDict[str, int], OrderedDict[str, int]]:
     patches = update_dict_keys(dims, patches, default=True)
     strides = update_dict_keys(dims, strides, default=False)
 
@@ -135,14 +135,14 @@ def get_patches_size(
 
 def get_slices(
     idx: int,
-    da_size: Dict[str, int],
-    patches: Dict[str, int],
-    strides: Dict[str, int],
+    da_size: dict[str, int],
+    patches: dict[str, int],
+    strides: dict[str, int],
 ) -> OrderedDict[str, slice]:
     slices = {
         dim: slice(strides[dim] * idx, strides[dim] * idx + patches[dim])
         for dim, idx in zip(
-            da_size.keys(), np.unravel_index(idx, tuple(da_size.values()))
+            da_size.keys(), np.unravel_index(idx, tuple(da_size.values())), strict=True
         )
     }
     return slices
