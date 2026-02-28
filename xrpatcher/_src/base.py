@@ -135,7 +135,7 @@ class XRDAPatcher:
 
     def reconstruct(
         self,
-        items: Iterable,
+        items: list[np.ndarray],
         dims_labels: Iterable[str] | None = None,
         weight=None,
     ) -> xr.DataArray:
