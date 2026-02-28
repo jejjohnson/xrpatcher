@@ -48,9 +48,6 @@ docs = [
     "ipykernel>=6.29",
 ]
 
-[tool.hatch.version]
-path = "xrpatcher/__init__.py"
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
