@@ -177,7 +177,7 @@ class XRDAPatcher:
 
         # add any extra dimensions not specified
         if num_dim_labels < num_items:
-            new_dims = [f"v{i+1}" for i in range(num_items - num_dim_labels)]
+            new_dims = [f"v{i + 1}" for i in range(num_items - num_dim_labels)]
             dims_labels = dims_labels + new_dims
             num_dim_labels = len(dims_labels)
 
