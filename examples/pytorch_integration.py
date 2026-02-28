@@ -1,5 +1,5 @@
 # %% [markdown]
-# [![<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
 
 # %% [markdown]
 # # Pytorch Dataset Integration Demo
