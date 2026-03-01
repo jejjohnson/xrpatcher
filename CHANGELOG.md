@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5](https://github.com/jejjohnson/xrpatcher/compare/v0.0.4...v0.0.5) (2026-03-01)
+
+
+### Bug Fixes
+
+* align CI type-check/lint commands and fix type errors in base.py ([5048dc9](https://github.com/jejjohnson/xrpatcher/commit/5048dc9af7a070d33722333b72261e281152bf56))
+* align CI type-check/lint commands and fix type errors in base.py ([5494989](https://github.com/jejjohnson/xrpatcher/commit/5494989c96a9dac48f618479d96a6451a9aeaa66))
+* use indexers= keyword and order-preserving filter for coords_labels ([a5accc5](https://github.com/jejjohnson/xrpatcher/commit/a5accc5126db531fcb0cc49ba656256104e91b98))
+
 ## [0.0.4](https://github.com/jejjohnson/xrpatcher/compare/v0.0.3...v0.0.4) (2026-03-01)
 
 
