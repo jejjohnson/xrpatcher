@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.4](https://github.com/jejjohnson/xrpatcher/compare/v0.0.3...v0.0.4) (2026-03-01)
+
+
+### Bug Fixes
+
+* fix docstring in get_coords ([715afc2](https://github.com/jejjohnson/xrpatcher/commit/715afc29e7205bb362092bbeb6eef4eafe0389c7))
+* fix ty type errors in utils.py and base.py ([0e0a62d](https://github.com/jejjohnson/xrpatcher/commit/0e0a62dad39b0488d7322993d558187fdc5094fc))
+* move ty python-version under [tool.ty.environment] ([7e8eb6b](https://github.com/jejjohnson/xrpatcher/commit/7e8eb6b3f53a471f752a1f370be5c5c398aff405))
+* resolve ty typecheck CI failures ([31e0ee5](https://github.com/jejjohnson/xrpatcher/commit/31e0ee58847e334e3f413016d739dc293bb5d25d))
+
 ## [0.0.3](https://github.com/jejjohnson/xrpatcher/compare/v0.0.2...v0.0.3) (2026-03-01)
 
 
