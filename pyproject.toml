@@ -64,7 +64,7 @@ ignore = ["E402", "E721", "E731", "E741"]
 combine-as-imports = true
 lines-after-imports = 2
 
-[tool.ty]
+[tool.ty.environment]
 python-version = "3.12"
 
 [tool.pytest.ini_options]
