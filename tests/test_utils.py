@@ -1,5 +1,7 @@
+import numpy as np
 import pytest
 import xarray as xr
+from collections import OrderedDict
 
 from xrpatcher._src.utils import (
     check_lists_equal,
@@ -144,9 +146,6 @@ def test_get_patches_size_multi_dim(dims, patches, strides, correct):
 
 
 def test_get_dims_xrda():
-    import numpy as np
-    from collections import OrderedDict
-
     da = xr.DataArray(
         np.ones((5, 10, 3)),
         dims=["x", "y", "z"],
@@ -199,8 +198,6 @@ def test_get_slices_basic(idx, da_size, patches, strides, expected):
 
 
 def test_get_slices_last_item():
-    import numpy as np
-
     # da_size is the number of patches per dimension (not raw data size)
     # 10 patches in x, 5 patches in y → 50 total patches, last valid index is 49
     da_size = {"x": 10, "y": 5}
