@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import Literal
 
 import numpy as np
-import pytest
 from xarray_dataclasses import Coord, Data, Name, asdataarray
 
 from xrpatcher._src.base import XRDAPatcher
