@@ -9,7 +9,7 @@ Always verify all of the following pass before creating a commit or reporting pr
 1. **Tests** – `uv run pytest tests/ -q` must have 0 failures.
 2. **Lint** – `uv run --group lint ruff check xrpatcher/` must report no issues.
 3. **Format** – `uv run --group lint ruff format --check xrpatcher/` must report no files to reformat.
-4. **Type checks** – run `uv run ty check` (or `make typecheck`) and fix any type errors in changed files.
+4. **Type checks** – run `uv run --group typecheck ty check xrpatcher` (or `make typecheck`) and fix any type errors in changed files.
 
 ## Commit Messages
 

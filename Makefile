@@ -12,14 +12,14 @@ install:  ## Install all dependencies
 
 ##@ Quality
 lint:  ## Lint code using ruff
-	uv run ruff check ${PKGROOT}/
+	uv run --group lint ruff check ${PKGROOT}/
 
 format:  ## Format code using ruff
-	uv run ruff format ${PKGROOT}/
-	uv run ruff check --fix ${PKGROOT}/
+	uv run --group lint ruff format ${PKGROOT}/
+	uv run --group lint ruff check --fix ${PKGROOT}/
 
 typecheck:  ## Type check code using ty
-	uv run ty check
+	uv run --group typecheck ty check ${PKGROOT}
 
 ##@ Testing
 test:  ## Run tests with pytest
