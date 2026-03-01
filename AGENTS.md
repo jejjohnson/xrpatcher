@@ -16,13 +16,19 @@ Always verify all of the following pass before creating a commit or reporting pr
 All commit messages **must** follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 ```
-<type>: <description>
+<type>[(<scope>)][!]: <description>
 ```
+
+- `(scope)` is optional and describes the affected area (e.g., `feat(api): …`).
+- `!` is optional and denotes a breaking change (e.g., `feat!: …`).
+- `<description>` **must start with a lowercase letter** (enforced by CI).
 
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
 Examples:
 - `feat: add ...`
+- `feat(api): add new endpoint`
+- `fix!: change default behaviour`
 - `fix: ruff format violations in ...py`
 - `chore: add AGENTS.md with workflow rules`
 
