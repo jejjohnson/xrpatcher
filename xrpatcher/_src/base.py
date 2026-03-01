@@ -120,7 +120,7 @@ class XRDAPatcher:
             idx=item, da_size=self.da_size, patches=self.patches, strides=self.strides
         )
 
-        return self.da.isel(slices)
+        return self.da.isel(indexers=slices)
 
     def get_coords(self) -> list[xr.Dataset]:
         """Returns a list of xr.Datasets with the
@@ -187,7 +187,7 @@ class XRDAPatcher:
         assert num_dim_labels == num_items, msg
 
         # check for subset of coordinate arrays
-        coords_labels = list(set(dims_labels).intersection(coords_labels))
+        coords_labels = [label for label in dims_labels if label in coords_labels]
 
         # check_lists_subset(coords_labels, dims_labels)
         all_items_shape = dict(zip(dims_labels, item_shape, strict=True))
