@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.3](https://github.com/jejjohnson/xrpatcher/compare/v0.0.2...v0.0.3) (2026-03-01)
+
+
+### Documentation
+
+* expand Conventional Commits format in AGENTS.md to match CI validator ([271beb5](https://github.com/jejjohnson/xrpatcher/commit/271beb5ab56f2240a3f495d06f937b901445d90f))
+* update Conventional Commits format in AGENTS.md with scope, breaking change, and lowercase requirement ([5348543](https://github.com/jejjohnson/xrpatcher/commit/53485431d2f549a7fcd9c7c63e152bf596f17b90))
+
 ## [0.0.2](https://github.com/jejjohnson/xrpatcher/compare/v0.0.1...v0.0.2) (2026-03-01)
 
 
