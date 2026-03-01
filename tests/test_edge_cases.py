@@ -22,7 +22,7 @@ class Variable1D:
     name: Name[str] = "var"
 
 
-def _make_da(size: int, seed: int = 0):
+def _make_da(size: int):
     coord = np.arange(0, size, 1)
     data = RNG.randn(size).astype(np.float32)
     da = Variable1D(data=data, x=coord)
