@@ -111,7 +111,7 @@ def get_xrda_size(
     check_lists_equal(list(da_dims.keys()), list(patches.keys()))
     check_lists_equal(list(da_dims.keys()), list(strides.keys()))
 
-    dim_size = {}
+    dim_size: OrderedDict[str, int] = OrderedDict()
 
     for dim in patches:
         dim_size[dim] = max((da_dims[dim] - patches[dim]) // strides[dim] + 1, 0)
@@ -139,10 +139,9 @@ def get_slices(
     patches: dict[str, int],
     strides: dict[str, int],
 ) -> OrderedDict[str, slice]:
-    slices = {
-        dim: slice(strides[dim] * idx, strides[dim] * idx + patches[dim])
-        for dim, idx in zip(
-            da_size.keys(), np.unravel_index(idx, tuple(da_size.values())), strict=True
-        )
-    }
+    slices: OrderedDict[str, slice] = OrderedDict()
+    for dim, i in zip(
+        da_size.keys(), np.unravel_index(idx, tuple(da_size.values())), strict=True
+    ):
+        slices[dim] = slice(strides[dim] * i, strides[dim] * i + patches[dim])
     return slices

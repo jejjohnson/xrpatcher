@@ -124,8 +124,8 @@ class XRDAPatcher:
 
         return self.da.isel(**slices)
 
-    def get_coords(self) -> list[xr.DataArray]:
-        """Returns a list of xr.DataArray's with the
+    def get_coords(self) -> list[xr.Dataset]:
+        """Returns a list of xr.Dataset's with the
         coordinate values that correspond to each item.
         """
         coords = []
