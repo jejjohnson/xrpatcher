@@ -107,10 +107,10 @@ def test_xrda_patcher_1d(variable_1d, patch, stride, domain_limits, datasize):
     )
 
     msg = f"Patches: {ds.patches} | Strides: {ds.strides} | Dims: {ds.da_size}"
-    assert ds.strides == {"x": 1} if strides is None else strides, msg
-    assert ds.patches == {"x": 20} if patches is None else patches, msg
+    assert ds.strides == ({"x": 1} if strides is None else strides), msg
+    assert ds.patches == ({"x": 20} if patches is None else patches), msg
     assert ds.da_size == {"x": datasize}, msg
-    assert ds[0].shape == (patch,) if patch is not None else (1,), msg
+    assert ds[0].shape == ((patch,) if patch is not None else tuple(ds.patches.values())), msg
     assert len(ds) == datasize
 
 
@@ -221,10 +221,10 @@ def test_xrda_patcher_2d(variable_2d, patch, stride, domain_limits, datasize):
     )
 
     msg = f"Patches: {ds.patches} | Strides: {ds.strides} | Dims: {ds.da_size}"
-    assert ds.strides == {"x": 1, "y": 1} if strides is None else strides, msg
-    assert ds.patches == {"x": 20, "y": 40} if patches is None else patches, msg
+    assert ds.strides == ({"x": 1, "y": 1} if strides is None else strides), msg
+    assert ds.patches == ({"x": 20, "y": 40} if patches is None else patches), msg
     assert ds.da_size == {"x": datasize[0], "y": datasize[1]}, msg
-    assert ds[0].shape == (patch[0], patch[1]) if patch is not None else (1, 1), msg
+    assert ds[0].shape == ((patch[0], patch[1]) if patch is not None else tuple(ds.patches.values())), msg
     assert len(ds) == np.prod(list(datasize))
 
 
@@ -331,3 +331,159 @@ def test_xrda_patcher_2d_reconstruct_latent(patch, stride):
     )
     assert set(rec_da.coords.keys()) == {"x", "y"}
     assert rec_da.dims == tuple(["y", "z", "x"])
+
+
+# Use small cube 3D arrays to keep reconstruct tests fast.
+# Axis size (8) must be divisible by patch sizes used below.
+_AXIS_3D = np.arange(0, 8, 1)  # 8 elements (used for x, y, and z)
+
+
+@pytest.mark.parametrize(
+    "patch,stride,domain_limits,datasize",
+    [
+        (None, None, None, (1, 1, 1)),
+        ((1, 1, 1), None, None, (20, 40, 60)),
+        ((1, 1, 1), (1, 1, 1), None, (20, 40, 60)),
+        ((5, 5, 5), None, None, (16, 36, 56)),
+        ((5, 5, 5), (5, 5, 5), None, (4, 8, 12)),
+        ((10, 8, 6), (2, 4, 6), None, (6, 9, 10)),
+        ((5, 5, 5), (5, 5, 5), {"x": slice(-5, 4)}, (2, 8, 12)),
+    ],
+)
+def test_xrda_patcher_3d(variable_3d, patch, stride, domain_limits, datasize):
+    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    check_full_scan = True
+
+    ds = XRDAPatcher(
+        da=variable_3d,
+        patches=patches,
+        strides=strides,
+        domain_limits=domain_limits,
+        check_full_scan=check_full_scan,
+    )
+
+    msg = f"Patches: {ds.patches} | Strides: {ds.strides} | Dims: {ds.da_size}"
+    assert ds.strides == ({"x": 1, "y": 1, "z": 1} if strides is None else strides), msg
+    assert ds.patches == ({"x": 20, "y": 40, "z": 60} if patches is None else patches), msg
+    assert ds.da_size == {"x": datasize[0], "y": datasize[1], "z": datasize[2]}, msg
+    assert ds[0].shape == (
+        (patch[0], patch[1], patch[2]) if patch is not None else tuple(ds.patches.values())
+    ), msg
+    assert len(ds) == np.prod(list(datasize))
+
+
+@pytest.mark.parametrize(
+    "patch, stride",
+    [
+        (None, None),
+        ((4, 4, 4), (4, 4, 4)),
+        ((4, 4, 4), (2, 2, 2)),
+    ],
+)
+def test_xrda_patcher_3d_reconstruct(patch, stride):
+    data = RNG.randn(_AXIS_3D.shape[0], _AXIS_3D.shape[0], _AXIS_3D.shape[0])
+    da = Variable3D(data=data, x=_AXIS_3D, y=_AXIS_3D, z=_AXIS_3D, name="ssh")
+    da = asdataarray(da)
+
+    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+
+    xrda_batcher = XRDAPatcher(
+        da=da, patches=patches, strides=strides, check_full_scan=True
+    )
+    all_items = list(map(lambda x: x.data, xrda_batcher))
+
+    # No Weight | No Label
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=None, weight=None)
+    np.testing.assert_array_almost_equal(rec_da.data, xrda_batcher.da)
+    assert set(rec_da.coords.keys()) == {"x", "y", "z"}
+    assert rec_da.dims == tuple(["x", "y", "z"])
+
+    # Weight | Exact Label
+    weight = np.ones(
+        (xrda_batcher.patches["x"], xrda_batcher.patches["y"], xrda_batcher.patches["z"])
+    )
+    rec_da = xrda_batcher.reconstruct(
+        all_items, dims_labels=["x", "y", "z"], weight=weight
+    )
+    np.testing.assert_array_almost_equal(rec_da.data, xrda_batcher.da)
+    assert set(rec_da.coords.keys()) == {"x", "y", "z"}
+    assert rec_da.dims == tuple(["x", "y", "z"])
+
+    # Weight | Mixed Label (x, y only)
+    weight = np.ones((xrda_batcher.patches["x"], xrda_batcher.patches["y"]))
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=["x", "y"], weight=weight)
+    assert set(rec_da.coords.keys()) == {"x", "y"}
+    assert rec_da.dims == tuple(["x", "y", "v1"])
+
+    # No Weight | Mixed Label (z only)
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=["z"], weight=None)
+    assert list(rec_da.coords.keys()) == ["z"]
+    assert rec_da.dims == tuple(["z", "v1", "v2"])
+
+
+@pytest.mark.parametrize(
+    "patch, stride",
+    [
+        (None, None),
+        ((4, 4, 4), (4, 4, 4)),
+        ((4, 4, 4), (2, 2, 2)),
+    ],
+)
+def test_xrda_patcher_3d_reconstruct_latent(patch, stride):
+    data = RNG.randn(_AXIS_3D.shape[0], _AXIS_3D.shape[0], _AXIS_3D.shape[0])
+    da = Variable3D(data=data, x=_AXIS_3D, y=_AXIS_3D, z=_AXIS_3D, name="ssh")
+    da = asdataarray(da)
+
+    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+
+    xrda_batcher = XRDAPatcher(
+        da=da, patches=patches, strides=strides, check_full_scan=True
+    )
+    all_items = list(map(lambda x: x.data, xrda_batcher))
+    all_items = list(map(lambda x: repeat(x, "... -> ... N", N=5), all_items))
+
+    # No Weight | No Label — auto-adds extra dim
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=None, weight=None)
+    np.testing.assert_array_almost_equal(rec_da.isel(v1=0).data, xrda_batcher.da)
+    assert set(rec_da.coords.keys()) == {"x", "y", "z"}
+    assert rec_da.dims == tuple(["x", "y", "z", "v1"])
+
+    # No Weight | Exact Label with named extra dim
+    rec_da = xrda_batcher.reconstruct(
+        all_items, dims_labels=["x", "y", "z", "w"], weight=None
+    )
+    np.testing.assert_array_almost_equal(rec_da.isel(w=0).data, xrda_batcher.da)
+    assert set(rec_da.coords.keys()) == {"x", "y", "z"}
+    assert rec_da.dims == tuple(["x", "y", "z", "w"])
+
+    # Weight | Mixed Label (x, y only)
+    weight = np.ones((xrda_batcher.patches["x"], xrda_batcher.patches["y"]))
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=["x", "y"], weight=weight)
+    assert set(rec_da.coords.keys()) == {"x", "y"}
+    assert rec_da.dims == tuple(["x", "y", "v1", "v2"])
+
+
+def test_reconstruct_with_nonuniform_weight():
+    """Non-uniform weight should still reconstruct correctly for real patch data."""
+    coord = np.arange(1, 13, 1)  # 12 elements
+    data = RNG.randn(12)
+    da = Variable1D(data=data, x=coord, name="ssh")
+    da = asdataarray(da)
+
+    # Overlapping patches: 5 patches total
+    xrda_batcher = XRDAPatcher(
+        da=da, patches={"x": 4}, strides={"x": 2}, check_full_scan=True
+    )
+    all_items = list(map(lambda x: x.data, xrda_batcher))
+
+    # Non-uniform (triangular) weight — heavier in the centre
+    weight = np.array([1.0, 3.0, 3.0, 1.0])
+    rec_da = xrda_batcher.reconstruct(all_items, dims_labels=["x"], weight=weight)
+
+    # With real patch values each point's weighted average equals its original value
+    np.testing.assert_array_almost_equal(rec_da.data, da.data)
+    assert list(rec_da.coords.keys()) == ["x"]
+    assert rec_da.dims == ("x",)

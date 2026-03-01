@@ -8,6 +8,7 @@
 ![codestyle](https://img.shields.io/badge/codestyle-ruff-black)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jejjohnson/xrpatcher)
+[![Tests](https://github.com/jejjohnson/xrpatcher/actions/workflows/ci.yml/badge.svg)](https://github.com/jejjohnson/xrpatcher/actions/workflows/ci.yml)
 
 * J. Emmanuel Johnson
 * Quentin Febvre
