@@ -1,4 +1,4 @@
-.PHONY: help install lint format typecheck test precommit
+.PHONY: help install lint format typecheck test precommit docs docs-serve docs-deploy
 .DEFAULT_GOAL = help
 
 PKGROOT = xrpatcher
@@ -28,3 +28,25 @@ test:  ## Run tests with pytest
 ##@ Pre-commit
 precommit:  ## Run pre-commit on all files
 	uv run pre-commit run --all-files
+
+##@ Docs
+docs:  ## Build documentation
+	@if [ ! -f mkdocs.yml ] || [ ! -d docs ]; then \
+		echo "Error: MkDocs configuration (mkdocs.yml) or docs/ directory not found. Documentation tooling is not yet set up in this repository."; \
+		exit 1; \
+	fi
+	uv run --group docs mkdocs build
+
+docs-serve:  ## Serve documentation locally
+	@if [ ! -f mkdocs.yml ] || [ ! -d docs ]; then \
+		echo "Error: MkDocs configuration (mkdocs.yml) or docs/ directory not found. Documentation tooling is not yet set up in this repository."; \
+		exit 1; \
+	fi
+	uv run --group docs mkdocs serve
+
+docs-deploy:  ## Deploy documentation to GitHub Pages
+	@if [ ! -f mkdocs.yml ] || [ ! -d docs ]; then \
+		echo "Error: MkDocs configuration (mkdocs.yml) or docs/ directory not found. Documentation tooling is not yet set up in this repository."; \
+		exit 1; \
+	fi
+	uv run --group docs mkdocs gh-deploy --force
