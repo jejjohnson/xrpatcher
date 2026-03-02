@@ -1,6 +1,6 @@
 [project]
 name = "xrpatcher"
-version = "0.0.5"
+version = "0.0.6"
 description = "A ML-oriented generic patcher for xarray data structures."
 authors = [
     {name="J. Emmanuel Johnson", email="jemanjohnson34@gmail.com"},

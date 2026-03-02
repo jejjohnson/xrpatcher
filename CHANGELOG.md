@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.6](https://github.com/jejjohnson/xrpatcher/compare/v0.0.5...v0.0.6) (2026-03-02)
+
+
+### Bug Fixes
+
+* address review comments on AGENTS.md and Makefile docs targets ([571d31e](https://github.com/jejjohnson/xrpatcher/commit/571d31e96b833e23d4afb12223fbf9fc850706c4))
+
 ## [0.0.5](https://github.com/jejjohnson/xrpatcher/compare/v0.0.4...v0.0.5) (2026-03-01)
 
 
