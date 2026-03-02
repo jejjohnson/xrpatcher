@@ -6,7 +6,7 @@ This file contains standing instructions for **all** coding agents working on th
 
 **All agents must** verify that every one of the following passes before creating a commit or reporting progress. No exceptions.
 
-1. **Tests** – `uv run pytest -q` (or `make test`) must have 0 failures.
+1. **Tests** – `uv run pytest -v` (or `make test`) must have 0 failures.
 2. **Lint** – `uv run --group lint ruff check xrpatcher/` (or `make lint`) must report no issues.
 3. **Format** – `uv run --group lint ruff format --check xrpatcher/` must report no files to reformat.
 4. **Type checks** – `uv run --group typecheck ty check xrpatcher` (or `make typecheck`) must report no errors in changed files.
@@ -24,9 +24,9 @@ This repo uses **MkDocs + Material + mkdocstrings + mkdocs-jupyter** for documen
 - **Build locally**: `make docs-serve` (or `uv run --group docs mkdocs serve`)
 - **Build static site**: `make docs` (or `uv run --group docs mkdocs build`)
 - **Deploy to GitHub Pages**: `make docs-deploy` (or `uv run --group docs mkdocs gh-deploy --force`)
-- **Auto-deploy**: the `pages.yml` workflow deploys automatically on every push to `main`
+- **Auto-deploy**: when a `pages.yml` workflow is configured, it should deploy automatically on every push to `main`
 
-When writing docstrings, use **Google style** (enforced by `mkdocstrings` config).
+When writing docstrings, use **Google style** so they are compatible with a `mkdocstrings`-based docs configuration.
 
 Notebooks in `docs/` may be stored as `.ipynb` files or as `jupytext`-paired `.py` files.
 
@@ -36,7 +36,9 @@ All commit messages **must** follow the [Conventional Commits](https://www.conve
 
 ```
 <type>[(<scope>)][!]: <description>
+
 [optional body]
+
 [optional footer(s)]
 ```
 
