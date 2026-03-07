@@ -32,6 +32,8 @@ class XRDAPatcher:
         strides: dict[str, int] | None = None,
         domain_limits: dict | None = None,
         check_full_scan: bool = False,
+        cache: bool = False,
+        preload: bool = False,
     ):
         """
         Args:
@@ -44,6 +46,9 @@ class XRDAPatcher:
                 to select for patch extractions
             check_full_scan bool: if True raise an error if the whole domain is
                 not scanned by the patch size stride combination
+            cache bool: if True cache patches in memory after the first access
+            preload bool: if True and cache is enabled, eagerly load cached
+                patches into memory
 
         Attributes:
             da (xr.DataArray): xarray datarray to be referenced during the iterations
@@ -60,6 +65,9 @@ class XRDAPatcher:
             da = da.sel(**domain_limits)
 
         self.da = da
+        self.cache = cache
+        self.preload = preload
+        self._cache: dict[int, xr.DataArray] = {}
 
         self.da_dims = get_dims_xrda(da)
 
@@ -115,12 +123,26 @@ class XRDAPatcher:
             yield self[i]
 
     def __getitem__(self, item):
+        if self.cache and item in self._cache:
+            return self._cache[item]
 
         slices = get_slices(
             idx=item, da_size=self.da_size, patches=self.patches, strides=self.strides
         )
 
-        return self.da.isel(indexers=slices)
+        patch = self.da.isel(indexers=slices)
+
+        if self.cache and self.preload:
+            patch = patch.load()
+
+        if self.cache:
+            self._cache[item] = patch
+
+        return patch
+
+    def clear_cache(self) -> None:
+        """Clear any in-memory cached patches."""
+        self._cache.clear()
 
     def get_coords(self) -> list[xr.Dataset]:
         """Returns a list of xr.Datasets with the

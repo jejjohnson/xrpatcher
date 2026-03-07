@@ -51,3 +51,77 @@ def test_iter_is_repeatable(patcher_1d):
     assert len(items1) == len(items2)
     for i1, i2 in zip(items1, items2, strict=True):
         xr.testing.assert_identical(i1, i2)
+
+
+def test_getitem_uses_cache_when_enabled():
+    """Repeated access returns the cached patch instance when cache=True."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+    )
+
+    first = patcher[1]
+    second = patcher[1]
+
+    assert first is second
+
+
+def test_clear_cache_forces_patch_reload():
+    """clear_cache() removes cached patches so the next access re-slices the data."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+    )
+
+    first = patcher[2]
+    patcher.clear_cache()
+    second = patcher[2]
+
+    assert first is not second
+    assert len(patcher._cache) == 1
+
+
+def test_preload_loads_patch_once_before_caching(monkeypatch):
+    """preload=True loads a patch once before it is cached."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+        preload=True,
+    )
+
+    calls = 0
+    original_load = xr.DataArray.load
+
+    def spy_load(self, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_load(self, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "load", spy_load)
+
+    first = patcher[0]
+    second = patcher[0]
+
+    assert first is second
+    assert calls == 1
