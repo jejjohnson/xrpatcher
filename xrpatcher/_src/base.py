@@ -131,6 +131,20 @@ class XRDAPatcher:
     def _get_patch(
         self, item: int, use_cache: bool = True, preload: bool | None = None
     ) -> xr.DataArray:
+        """Return a patch with optional control over cache and preload behavior.
+
+        This is used internally for coordinate-only access paths that should not
+        populate the runtime cache or eagerly load patch data.
+
+        Args:
+            item (int): Patch index to retrieve.
+            use_cache (bool): If True, use and populate the runtime cache.
+            preload (bool | None): If True, load the patch before caching. If
+                None, use the instance-level preload setting.
+
+        Returns:
+            xr.DataArray: The requested patch.
+        """
         if preload is None:
             preload = self.preload
 

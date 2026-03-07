@@ -537,10 +537,10 @@ def test_reconstruct_bypasses_cache_and_preload_for_internal_coords(monkeypatch)
     calls = 0
     original_load = xr.DataArray.load
 
-    def spy_load(self, *args, **kwargs):
+    def spy_load(data_array, *args, **kwargs):
         nonlocal calls
         calls += 1
-        return original_load(self, *args, **kwargs)
+        return original_load(data_array, *args, **kwargs)
 
     monkeypatch.setattr(xr.DataArray, "load", spy_load)
 
