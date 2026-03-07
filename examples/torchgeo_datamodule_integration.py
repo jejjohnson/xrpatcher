@@ -125,7 +125,7 @@ def sample_to_dataarray(
     crs: str,
 ) -> xr.DataArray:
     image_np = image.detach().cpu().numpy()
-    y_coords = pixel_centers(float(bbox.miny), float(bbox.maxy), image_np.shape[-2])
+    y_coords = pixel_centers(float(bbox.maxy), float(bbox.miny), image_np.shape[-2])
     x_coords = pixel_centers(float(bbox.minx), float(bbox.maxx), image_np.shape[-1])
 
     return xr.DataArray(
