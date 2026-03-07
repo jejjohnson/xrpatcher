@@ -332,10 +332,11 @@ print(f"Patch mask shape: {first_patch['mask'].shape}")
 
 # %%
 rec_weight = np.ones((128, 128), dtype=np.float32)
-rec_weight[:8] = 0
-rec_weight[-8:] = 0
-rec_weight[:, :8] = 0
-rec_weight[:, -8:] = 0
+border_epsilon = 1e-6
+rec_weight[:8] = border_epsilon
+rec_weight[-8:] = border_epsilon
+rec_weight[:, :8] = border_epsilon
+rec_weight[:, -8:] = border_epsilon
 
 probability_map = torch_ds.reconstruct_from_batches(
     (torch.sigmoid(batch["image"][:, 0]).cpu().numpy() for batch in dataloader),
@@ -348,8 +349,8 @@ print(probability_map)
 # %% [markdown]
 # ## 5. Visualize the end-to-end workflow
 #
-# The three panels below show the original TorchGeo sample, the corresponding
-# target mask, and the reconstructed patch-wise output.
+# The four panels below show the original TorchGeo sample, one xrpatcher patch,
+# the corresponding target mask, and the reconstructed patch-wise output.
 
 # %%
 fig, axes = plt.subplots(1, 4, figsize=(14, 4))
