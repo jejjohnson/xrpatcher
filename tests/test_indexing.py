@@ -73,7 +73,7 @@ def test_getitem_uses_cache_when_enabled():
     assert first is second
 
 
-def test_clear_cache_forces_patch_reload(monkeypatch):
+def test_clear_cache_forces_reslicing(monkeypatch):
     """clear_cache() removes cached patches so the next access re-slices the data."""
     coord = np.arange(0, 20, 1)
     data = np.arange(20, dtype=np.float32)
@@ -137,3 +137,20 @@ def test_preload_loads_patch_once_on_first_access(monkeypatch):
 
     assert first is second
     assert calls == 1
+
+
+def test_preload_requires_cache():
+    """preload=True without cache=True raises a helpful configuration error."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+
+    with pytest.raises(ValueError, match=r"preload=True requires cache=True\."):
+        XRDAPatcher(
+            da=da,
+            patches={"x": 4},
+            strides={"x": 4},
+            check_full_scan=True,
+            preload=True,
+        )

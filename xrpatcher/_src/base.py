@@ -65,6 +65,10 @@ class XRDAPatcher:
             check_lists_subset(list(domain_limits.keys()), list(da_dims.keys()))
             da = da.sel(**domain_limits)
 
+        if preload and not cache:
+            msg = "preload=True requires cache=True."
+            raise ValueError(msg)
+
         self.da = da
         self.cache = cache
         self.preload = preload
