@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7](https://github.com/jejjohnson/xrpatcher/compare/v0.0.6...v0.0.7) (2026-03-07)
+
+
+### Features
+
+* add in-memory caching for repeated patch access ([63f16f1](https://github.com/jejjohnson/xrpatcher/commit/63f16f1f89b5f8c4d6c544ba57f6dda8d6106e4f))
+* add in-memory patch caching to XRDAPatcher ([0426752](https://github.com/jejjohnson/xrpatcher/commit/0426752da1dfb7a683d38e4758d3111686c3b519))
+
+
+### Bug Fixes
+
+* bypass cache for internal coordinate access ([3603746](https://github.com/jejjohnson/xrpatcher/commit/360374610d759606b6fa2017730b0ec35d4cca68))
+* validate preload cache configuration ([325e3f1](https://github.com/jejjohnson/xrpatcher/commit/325e3f1cba082d54a1b86c457b6cf4bbcf0c4caf))
+
+
+### Documentation
+
+* align cache parameter docstrings ([64cece6](https://github.com/jejjohnson/xrpatcher/commit/64cece65e031f8a7d417db2a69ee886f81604826))
+* clarify internal cache bypass helper ([5d69fea](https://github.com/jejjohnson/xrpatcher/commit/5d69fea8e4152b152c5f904e998f4d324368e239))
+* clarify preload cache behavior ([ff9c596](https://github.com/jejjohnson/xrpatcher/commit/ff9c596397d37b48b076aa240ac6e045801bdb13))
+
 ## [0.0.6](https://github.com/jejjohnson/xrpatcher/compare/v0.0.5...v0.0.6) (2026-03-02)
 
 
