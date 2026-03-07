@@ -57,6 +57,51 @@ test_patcher = XRDAPatcher(
 ```
 
 ---
+### Caching Repeated Patch Access
+
+If the same patch index is accessed repeatedly, you can enable in-memory caching:
+
+```python
+patcher = XRDAPatcher(
+    da=data,
+    patches=patches,
+    strides=strides,
+    cache=True,
+    preload=True,  # eagerly load cached patches into memory
+)
+
+patch = patcher[0]     # sliced and cached on first access
+patch = patcher[0]     # returned from cache on later access
+patcher.clear_cache()  # free cached patches
+```
+
+`preload=True` is useful when your `DataArray` may be backed by lazy arrays and you
+want cached patches to be loaded into RAM when they are first accessed and cached.
+If `preload=False`, the cache stores the original patch objects as-is.
+`preload=True` requires `cache=True`.
+
+You can compare cached and uncached repeated access with a simple benchmark:
+
+```python
+from time import perf_counter
+
+uncached = XRDAPatcher(da=data, patches=patches, strides=strides)
+cached = XRDAPatcher(
+    da=data,
+    patches=patches,
+    strides=strides,
+    cache=True,
+    preload=True,
+)
+
+for label, patcher in [("uncached", uncached), ("cached", cached)]:
+    start = perf_counter()
+    for _ in range(5):
+        _ = patcher[0]
+    print(label, perf_counter() - start)
+```
+
+---
 ### Extended Examples
 
 **Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/patching_cc.py)

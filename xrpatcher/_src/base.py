@@ -32,6 +32,8 @@ class XRDAPatcher:
         strides: dict[str, int] | None = None,
         domain_limits: dict | None = None,
         check_full_scan: bool = False,
+        cache: bool = False,
+        preload: bool = False,
     ):
         """
         Args:
@@ -42,8 +44,12 @@ class XRDAPatcher:
                 (defaults to one stride per dimension)
             domain_limits (Optional[Dict]): dict of da dimension to slices of domain
                 to select for patch extractions
-            check_full_scan bool: if True raise an error if the whole domain is
+            check_full_scan (bool): if True raise an error if the whole domain is
                 not scanned by the patch size stride combination
+            cache (bool): if True cache patches in memory after the first access
+            preload (bool): if True and cache is enabled, load each patch into
+                memory when it is first accessed and cached. If False, cached
+                patches keep their original backing array.
 
         Attributes:
             da (xr.DataArray): xarray datarray to be referenced during the iterations
@@ -53,13 +59,21 @@ class XRDAPatcher:
                 (defaults to one stride per dimension)
             ds_size (OrderedDict): the dictionary of dimensions for the slicing
             da_dims (OrderedDict): the dictionary of the original dimensions
+            _cache (Dict[int, xr.DataArray]): cached patches keyed by item index
         """
         if domain_limits is not None:
             da_dims = get_dims_xrda(da)
             check_lists_subset(list(domain_limits.keys()), list(da_dims.keys()))
             da = da.sel(**domain_limits)
 
+        if preload and not cache:
+            msg = "preload=True requires cache=True."
+            raise ValueError(msg)
+
         self.da = da
+        self.cache = cache
+        self.preload = preload
+        self._cache: dict[int, xr.DataArray] = {}
 
         self.da_dims = get_dims_xrda(da)
 
@@ -114,13 +128,49 @@ class XRDAPatcher:
         for i in range(len(self)):
             yield self[i]
 
-    def __getitem__(self, item):
+    def _get_patch(
+        self, item: int, use_cache: bool = True, preload: bool | None = None
+    ) -> xr.DataArray:
+        """Return a patch with optional control over cache and preload behavior.
+
+        This is used internally for coordinate-only access paths that should not
+        populate the runtime cache or eagerly load patch data.
+
+        Args:
+            item (int): Patch index to retrieve.
+            use_cache (bool): If True, use and populate the runtime cache.
+            preload (bool | None): If True, load the patch before caching. If
+                None, use the instance-level preload setting.
+
+        Returns:
+            xr.DataArray: The requested patch.
+        """
+        if preload is None:
+            preload = self.preload
+
+        if use_cache and self.cache and item in self._cache:
+            return self._cache[item]
 
         slices = get_slices(
             idx=item, da_size=self.da_size, patches=self.patches, strides=self.strides
         )
 
-        return self.da.isel(indexers=slices)
+        patch = self.da.isel(indexers=slices)
+
+        if use_cache and self.cache and preload:
+            patch = patch.load()
+
+        if use_cache and self.cache:
+            self._cache[item] = patch
+
+        return patch
+
+    def __getitem__(self, item):
+        return self._get_patch(item=item)
+
+    def clear_cache(self) -> None:
+        """Clear any in-memory cached patches."""
+        self._cache.clear()
 
     def get_coords(self) -> list[xr.Dataset]:
         """Returns a list of xr.Datasets with the
@@ -128,7 +178,11 @@ class XRDAPatcher:
         """
         coords = []
         for i in range(len(self)):
-            coords.append(self[i].coords.to_dataset()[list(self.patches)])
+            coords.append(
+                self._get_patch(
+                    item=i, use_cache=False, preload=False
+                ).coords.to_dataset()[list(self.patches)]
+            )
         return coords
 
     def reconstruct(

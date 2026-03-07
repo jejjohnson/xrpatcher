@@ -51,3 +51,141 @@ def test_iter_is_repeatable(patcher_1d):
     assert len(items1) == len(items2)
     for i1, i2 in zip(items1, items2, strict=True):
         xr.testing.assert_identical(i1, i2)
+
+
+def test_getitem_uses_cache_when_enabled():
+    """Repeated access returns the cached patch instance when cache=True."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+    )
+
+    first = patcher[1]
+    second = patcher[1]
+
+    assert first is second
+
+
+def test_clear_cache_forces_reslicing(monkeypatch):
+    """clear_cache() removes cached patches so the next access re-slices the data."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+    )
+
+    calls = 0
+    original_isel = xr.DataArray.isel
+
+    def spy_isel(self, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_isel(self, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "isel", spy_isel)
+
+    first = patcher[2]
+    cached = patcher[2]
+    patcher.clear_cache()
+    second = patcher[2]
+
+    assert first is cached
+    assert first is not second
+    assert calls == 2
+
+
+def test_preload_loads_patch_once_on_first_access(monkeypatch):
+    """preload=True loads a patch once on first access before cache hits."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+        preload=True,
+    )
+
+    calls = 0
+    original_load = xr.DataArray.load
+
+    def spy_load(data_array, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_load(data_array, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "load", spy_load)
+
+    first = patcher[0]
+    second = patcher[0]
+
+    assert first is second
+    assert calls == 1
+
+
+def test_get_coords_bypasses_cache_and_preload(monkeypatch):
+    """get_coords() should not trigger preload or populate the runtime cache."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+        preload=True,
+    )
+
+    calls = 0
+    original_load = xr.DataArray.load
+
+    def spy_load(data_array, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_load(data_array, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "load", spy_load)
+
+    coords = patcher.get_coords()
+
+    assert len(coords) == len(patcher)
+    assert calls == 0
+
+    _ = patcher[0]
+
+    assert calls == 1
+
+
+def test_preload_requires_cache():
+    """preload=True without cache=True raises a helpful configuration error."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+
+    with pytest.raises(ValueError, match=r"preload=True requires cache=True\."):
+        XRDAPatcher(
+            da=da,
+            patches={"x": 4},
+            strides={"x": 4},
+            check_full_scan=True,
+            preload=True,
+        )
