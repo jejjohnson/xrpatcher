@@ -73,7 +73,7 @@ def test_getitem_uses_cache_when_enabled():
     assert first is second
 
 
-def test_clear_cache_forces_patch_reload():
+def test_clear_cache_forces_patch_reload(monkeypatch):
     """clear_cache() removes cached patches so the next access re-slices the data."""
     coord = np.arange(0, 20, 1)
     data = np.arange(20, dtype=np.float32)
@@ -87,12 +87,24 @@ def test_clear_cache_forces_patch_reload():
         cache=True,
     )
 
+    calls = 0
+    original_isel = xr.DataArray.isel
+
+    def spy_isel(self, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_isel(self, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "isel", spy_isel)
+
     first = patcher[2]
+    cached = patcher[2]
     patcher.clear_cache()
     second = patcher[2]
 
+    assert first is cached
     assert first is not second
-    assert len(patcher._cache) == 1
+    assert calls == 2
 
 
 def test_preload_loads_patch_once_on_first_access(monkeypatch):

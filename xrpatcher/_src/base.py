@@ -48,7 +48,8 @@ class XRDAPatcher:
                 not scanned by the patch size stride combination
             cache bool: if True cache patches in memory after the first access
             preload bool: if True and cache is enabled, load each patch into
-                memory when it is first accessed and cached
+                memory when it is first accessed and cached. If False, cached
+                patches keep their original backing array.
 
         Attributes:
             da (xr.DataArray): xarray datarray to be referenced during the iterations
