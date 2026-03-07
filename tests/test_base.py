@@ -3,6 +3,7 @@ from typing import Literal
 
 import numpy as np
 import pytest
+import xarray as xr
 from einops import repeat
 from xarray_dataclasses import Coord, Data, Name, asdataarray
 
@@ -110,7 +111,9 @@ def test_xrda_patcher_1d(variable_1d, patch, stride, domain_limits, datasize):
     assert ds.strides == ({"x": 1} if strides is None else strides), msg
     assert ds.patches == ({"x": 20} if patches is None else patches), msg
     assert ds.da_size == {"x": datasize}, msg
-    assert ds[0].shape == ((patch,) if patch is not None else tuple(ds.patches.values())), msg
+    assert ds[0].shape == (
+        (patch,) if patch is not None else tuple(ds.patches.values())
+    ), msg
     assert len(ds) == datasize
 
 
@@ -224,7 +227,9 @@ def test_xrda_patcher_2d(variable_2d, patch, stride, domain_limits, datasize):
     assert ds.strides == ({"x": 1, "y": 1} if strides is None else strides), msg
     assert ds.patches == ({"x": 20, "y": 40} if patches is None else patches), msg
     assert ds.da_size == {"x": datasize[0], "y": datasize[1]}, msg
-    assert ds[0].shape == ((patch[0], patch[1]) if patch is not None else tuple(ds.patches.values())), msg
+    assert ds[0].shape == (
+        (patch[0], patch[1]) if patch is not None else tuple(ds.patches.values())
+    ), msg
     assert len(ds) == np.prod(list(datasize))
 
 
@@ -351,8 +356,12 @@ _AXIS_3D = np.arange(0, 8, 1)  # 8 elements (used for x, y, and z)
     ],
 )
 def test_xrda_patcher_3d(variable_3d, patch, stride, domain_limits, datasize):
-    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
-    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    patches = (
+        {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    )
+    strides = (
+        {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    )
     check_full_scan = True
 
     ds = XRDAPatcher(
@@ -365,10 +374,14 @@ def test_xrda_patcher_3d(variable_3d, patch, stride, domain_limits, datasize):
 
     msg = f"Patches: {ds.patches} | Strides: {ds.strides} | Dims: {ds.da_size}"
     assert ds.strides == ({"x": 1, "y": 1, "z": 1} if strides is None else strides), msg
-    assert ds.patches == ({"x": 20, "y": 40, "z": 60} if patches is None else patches), msg
+    assert ds.patches == (
+        {"x": 20, "y": 40, "z": 60} if patches is None else patches
+    ), msg
     assert ds.da_size == {"x": datasize[0], "y": datasize[1], "z": datasize[2]}, msg
     assert ds[0].shape == (
-        (patch[0], patch[1], patch[2]) if patch is not None else tuple(ds.patches.values())
+        (patch[0], patch[1], patch[2])
+        if patch is not None
+        else tuple(ds.patches.values())
     ), msg
     assert len(ds) == np.prod(list(datasize))
 
@@ -386,8 +399,12 @@ def test_xrda_patcher_3d_reconstruct(patch, stride):
     da = Variable3D(data=data, x=_AXIS_3D, y=_AXIS_3D, z=_AXIS_3D, name="ssh")
     da = asdataarray(da)
 
-    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
-    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    patches = (
+        {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    )
+    strides = (
+        {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    )
 
     xrda_batcher = XRDAPatcher(
         da=da, patches=patches, strides=strides, check_full_scan=True
@@ -402,7 +419,11 @@ def test_xrda_patcher_3d_reconstruct(patch, stride):
 
     # Weight | Exact Label
     weight = np.ones(
-        (xrda_batcher.patches["x"], xrda_batcher.patches["y"], xrda_batcher.patches["z"])
+        (
+            xrda_batcher.patches["x"],
+            xrda_batcher.patches["y"],
+            xrda_batcher.patches["z"],
+        )
     )
     rec_da = xrda_batcher.reconstruct(
         all_items, dims_labels=["x", "y", "z"], weight=weight
@@ -436,8 +457,12 @@ def test_xrda_patcher_3d_reconstruct_latent(patch, stride):
     da = Variable3D(data=data, x=_AXIS_3D, y=_AXIS_3D, z=_AXIS_3D, name="ssh")
     da = asdataarray(da)
 
-    patches = {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
-    strides = {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    patches = (
+        {"x": patch[0], "y": patch[1], "z": patch[2]} if patch is not None else None
+    )
+    strides = (
+        {"x": stride[0], "y": stride[1], "z": stride[2]} if stride is not None else None
+    )
 
     xrda_batcher = XRDAPatcher(
         da=da, patches=patches, strides=strides, check_full_scan=True
@@ -487,3 +512,43 @@ def test_reconstruct_with_nonuniform_weight():
     np.testing.assert_array_almost_equal(rec_da.data, da.data)
     assert list(rec_da.coords.keys()) == ["x"]
     assert rec_da.dims == ("x",)
+
+
+def test_reconstruct_bypasses_cache_and_preload_for_internal_coords(monkeypatch):
+    """reconstruct() should not preload/cache patches just to recover coordinates."""
+    coord = np.arange(1, 13, 1)
+    data = RNG.randn(12)
+    da = Variable1D(data=data, x=coord, name="ssh")
+    da = asdataarray(da)
+
+    uncached_patcher = XRDAPatcher(
+        da=da, patches={"x": 4}, strides={"x": 2}, check_full_scan=True
+    )
+    cached_patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 2},
+        check_full_scan=True,
+        cache=True,
+        preload=True,
+    )
+    all_items = list(map(lambda x: x.data, uncached_patcher))
+
+    calls = 0
+    original_load = xr.DataArray.load
+
+    def spy_load(self, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_load(self, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "load", spy_load)
+
+    rec_da = cached_patcher.reconstruct(all_items, dims_labels=["x"], weight=None)
+
+    np.testing.assert_array_almost_equal(rec_da.data, da.data)
+    assert calls == 0
+
+    _ = cached_patcher[0]
+
+    assert calls == 1

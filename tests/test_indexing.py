@@ -139,6 +139,41 @@ def test_preload_loads_patch_once_on_first_access(monkeypatch):
     assert calls == 1
 
 
+def test_get_coords_bypasses_cache_and_preload(monkeypatch):
+    """get_coords() should not trigger preload or populate the runtime cache."""
+    coord = np.arange(0, 20, 1)
+    data = np.arange(20, dtype=np.float32)
+    da = Variable1D(data=data, x=coord)
+    da = asdataarray(da)
+    patcher = XRDAPatcher(
+        da=da,
+        patches={"x": 4},
+        strides={"x": 4},
+        check_full_scan=True,
+        cache=True,
+        preload=True,
+    )
+
+    calls = 0
+    original_load = xr.DataArray.load
+
+    def spy_load(self, *args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_load(self, *args, **kwargs)
+
+    monkeypatch.setattr(xr.DataArray, "load", spy_load)
+
+    coords = patcher.get_coords()
+
+    assert len(coords) == len(patcher)
+    assert calls == 0
+
+    _ = patcher[0]
+
+    assert calls == 1
+
+
 def test_preload_requires_cache():
     """preload=True without cache=True raises a helpful configuration error."""
     coord = np.arange(0, 20, 1)

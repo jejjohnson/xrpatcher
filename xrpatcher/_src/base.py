@@ -128,8 +128,13 @@ class XRDAPatcher:
         for i in range(len(self)):
             yield self[i]
 
-    def __getitem__(self, item):
-        if self.cache and item in self._cache:
+    def _get_patch(
+        self, item: int, use_cache: bool = True, preload: bool | None = None
+    ) -> xr.DataArray:
+        if preload is None:
+            preload = self.preload
+
+        if use_cache and self.cache and item in self._cache:
             return self._cache[item]
 
         slices = get_slices(
@@ -138,13 +143,16 @@ class XRDAPatcher:
 
         patch = self.da.isel(indexers=slices)
 
-        if self.cache and self.preload:
+        if use_cache and self.cache and preload:
             patch = patch.load()
 
-        if self.cache:
+        if use_cache and self.cache:
             self._cache[item] = patch
 
         return patch
+
+    def __getitem__(self, item):
+        return self._get_patch(item=item)
 
     def clear_cache(self) -> None:
         """Clear any in-memory cached patches."""
@@ -156,7 +164,11 @@ class XRDAPatcher:
         """
         coords = []
         for i in range(len(self)):
-            coords.append(self[i].coords.to_dataset()[list(self.patches)])
+            coords.append(
+                self._get_patch(
+                    item=i, use_cache=False, preload=False
+                ).coords.to_dataset()[list(self.patches)]
+            )
         return coords
 
     def reconstruct(
