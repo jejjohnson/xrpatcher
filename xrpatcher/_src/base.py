@@ -44,10 +44,10 @@ class XRDAPatcher:
                 (defaults to one stride per dimension)
             domain_limits (Optional[Dict]): dict of da dimension to slices of domain
                 to select for patch extractions
-            check_full_scan bool: if True raise an error if the whole domain is
+            check_full_scan (bool): if True raise an error if the whole domain is
                 not scanned by the patch size stride combination
-            cache bool: if True cache patches in memory after the first access
-            preload bool: if True and cache is enabled, load each patch into
+            cache (bool): if True cache patches in memory after the first access
+            preload (bool): if True and cache is enabled, load each patch into
                 memory when it is first accessed and cached. If False, cached
                 patches keep their original backing array.
 
@@ -59,6 +59,7 @@ class XRDAPatcher:
                 (defaults to one stride per dimension)
             ds_size (OrderedDict): the dictionary of dimensions for the slicing
             da_dims (OrderedDict): the dictionary of the original dimensions
+            _cache (Dict[int, xr.DataArray]): cached patches keyed by item index
         """
         if domain_limits is not None:
             da_dims = get_dims_xrda(da)
