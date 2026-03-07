@@ -47,8 +47,8 @@ class XRDAPatcher:
             check_full_scan bool: if True raise an error if the whole domain is
                 not scanned by the patch size stride combination
             cache bool: if True cache patches in memory after the first access
-            preload bool: if True and cache is enabled, eagerly load cached
-                patches into memory
+            preload bool: if True and cache is enabled, load each patch into
+                memory when it is first accessed and cached
 
         Attributes:
             da (xr.DataArray): xarray datarray to be referenced during the iterations

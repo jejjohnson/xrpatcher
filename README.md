@@ -76,7 +76,7 @@ patcher.clear_cache()  # free cached patches
 ```
 
 `preload=True` is useful when your `DataArray` may be backed by lazy arrays and you
-want the cached patches to be loaded into RAM before they are stored.
+want cached patches to be loaded into RAM when they are first accessed and cached.
 
 You can compare cached and uncached repeated access with a simple benchmark:
 

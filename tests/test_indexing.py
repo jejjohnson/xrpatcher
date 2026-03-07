@@ -95,8 +95,8 @@ def test_clear_cache_forces_patch_reload():
     assert len(patcher._cache) == 1
 
 
-def test_preload_loads_patch_once_before_caching(monkeypatch):
-    """preload=True loads a patch once before it is cached."""
+def test_preload_loads_patch_once_on_first_access(monkeypatch):
+    """preload=True loads a patch once on first access before cache hits."""
     coord = np.arange(0, 20, 1)
     data = np.arange(20, dtype=np.float32)
     da = Variable1D(data=data, x=coord)
