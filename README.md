@@ -3,12 +3,15 @@
 [**Installation**](#installation)
 | [**Examples**](#examples)
 
-![pyver](https://img.shields.io/badge/python-3.12%203.13-red)
+[![Python Versions](https://img.shields.io/pypi/pyversions/xrpatcher)](https://pypi.org/project/xrpatcher/)
 [![PyPI version](https://badge.fury.io/py/xrpatcher.svg)](https://badge.fury.io/py/xrpatcher)
 ![codestyle](https://img.shields.io/badge/codestyle-ruff-black)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/pytorch_integration.py)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jejjohnson/xrpatcher)
 [![Tests](https://github.com/jejjohnson/xrpatcher/actions/workflows/ci.yml/badge.svg)](https://github.com/jejjohnson/xrpatcher/actions/workflows/ci.yml)
+[![Lint](https://github.com/jejjohnson/xrpatcher/actions/workflows/lint.yml/badge.svg)](https://github.com/jejjohnson/xrpatcher/actions/workflows/lint.yml)
+[![Format](https://github.com/jejjohnson/xrpatcher/actions/workflows/format.yml/badge.svg)](https://github.com/jejjohnson/xrpatcher/actions/workflows/format.yml)
+[![Typecheck](https://github.com/jejjohnson/xrpatcher/actions/workflows/typecheck.yml/badge.svg)](https://github.com/jejjohnson/xrpatcher/actions/workflows/typecheck.yml)
 
 * J. Emmanuel Johnson
 * Quentin Febvre
@@ -103,6 +106,10 @@ for label, patcher in [("uncached", uncached), ("cached", cached)]:
 
 ---
 ### Extended Examples
+
+**Caching Repeated Patch Access** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/caching.py)
+
+> We demonstrate how in-memory caching speeds up repeated access to the same patches, with a benchmark comparing cached and uncached access.
 
 **Patching Crash Course** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/patching_cc.py)
 
