@@ -52,10 +52,13 @@ docs = [
     "ipykernel>=6.29",
 ]
 examples = [
+    "einops>=0.8",
     "grain>=0.2",
     "jax>=0.4",
     "matplotlib>=3.8",
     "pooch>=1.8",
+    "torch>=2.0",
+    "xarray-dataclasses>=1.6",
 ]
 
 [build-system]
