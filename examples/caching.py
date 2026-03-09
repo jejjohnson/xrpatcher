@@ -73,9 +73,12 @@ cached = XRDAPatcher(
     preload=True,
 )
 
+# Warm up the cache so the benchmark measures pure cache-hit performance
+_patch = cached[0]
+
 for label, p in [("uncached", uncached), ("cached", cached)]:
     start = perf_counter()
     for _ in range(10):
-        _ = p[0]
+        _patch = p[0]
     elapsed = perf_counter() - start
     print(f"{label}: {elapsed:.4f}s")
