@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9](https://github.com/jejjohnson/xrpatcher/compare/v0.0.8...v0.0.9) (2026-03-09)
+
+
+### Features
+
+* add GitHub Actions workflow to publish to PyPI on release ([6b3622c](https://github.com/jejjohnson/xrpatcher/commit/6b3622c844edce43c972e60f60c9040fbf94101f))
+* add PyPI publish workflow triggered by release-please releases ([dfb65c8](https://github.com/jejjohnson/xrpatcher/commit/dfb65c856e76f5b562fc19e7b0f8295003d2a069))
+
+
+### Documentation
+
+* clarify trusted publisher setup wording in README ([3f09d8a](https://github.com/jejjohnson/xrpatcher/commit/3f09d8a0ff0a02d4e6b5db6323154ceba46f4c2e))
+
 ## [0.0.8](https://github.com/jejjohnson/xrpatcher/compare/v0.0.7...v0.0.8) (2026-03-09)
 
 
