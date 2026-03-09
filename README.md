@@ -153,8 +153,8 @@ When a release PR is merged into `main`, release-please creates a GitHub Release
 triggers the `publish-pypi.yml` workflow that builds and publishes the package to PyPI
 using OIDC trusted publishing (no API tokens required).
 
-To enable publishing from a fork or a new environment, a maintainer with owner access on
-PyPI must add a trusted publisher with the following settings:
+For publishing to work, a maintainer with owner access on PyPI must add this repository
+as a trusted publisher with the following settings:
 
 | Field | Value |
 |---|---|
