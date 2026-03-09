@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.11](https://github.com/jejjohnson/xrpatcher/compare/v0.0.10...v0.0.11) (2026-03-09)
+
+
+### Features
+
+* add Google Grain + JAX integration example with tests for all examples ([eeba5ec](https://github.com/jejjohnson/xrpatcher/commit/eeba5ec59394a093ca14fd84a0468ac440c6bbb6))
+* add tests for all example files and extend examples dependency group ([1562268](https://github.com/jejjohnson/xrpatcher/commit/15622685786e24debdcc048ef05905681e24fdfc))
+
+
+### Bug Fixes
+
+* address PR review comments in grain example and tests ([7f14d22](https://github.com/jejjohnson/xrpatcher/commit/7f14d2211b32ea14bec30d0f8bfbe543708ba064))
+
 ## [0.0.10](https://github.com/jejjohnson/xrpatcher/compare/v0.0.9...v0.0.10) (2026-03-09)
 
 
