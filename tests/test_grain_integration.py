@@ -7,12 +7,9 @@ These tests verify that:
 - ``patcher.reconstruct()`` returns an ``xr.DataArray`` with the correct
   shape after processing all batched predictions.
 
-``grain`` and ``jax`` are treated as optional test dependencies.  If either
-is not installed the tests are automatically skipped.
+``grain`` and ``jax`` are treated as optional test dependencies.  Tests that
+require them are skipped individually when the packages are not installed.
 """
-
-from dataclasses import dataclass
-from typing import Literal
 
 import numpy as np
 import pytest
@@ -25,27 +22,35 @@ from xrpatcher._src.base import XRDAPatcher
 # Optional dependency guards
 # ---------------------------------------------------------------------------
 
-grain = pytest.importorskip("grain", reason="grain is not installed")
-jax = pytest.importorskip("jax", reason="jax is not installed")
-jnp = jax.numpy
+try:
+    import grain as _grain_mod
+except ImportError:  # pragma: no cover - behavior tested via skipping
+    _grain_mod = None
+
+try:
+    import jax as _jax_mod
+except ImportError:  # pragma: no cover - behavior tested via skipping
+    _jax_mod = None
+
+
+class _OptionalDependencyProxy:
+    """Proxy that skips the current test on first attribute access."""
+
+    def __init__(self, name: str) -> None:
+        self._name = name
+
+    def __getattr__(self, attr: str):
+        pytest.skip(f"{self._name} is not installed")
+
+
+grain = _grain_mod if _grain_mod is not None else _OptionalDependencyProxy("grain")
+jax = _jax_mod if _jax_mod is not None else _OptionalDependencyProxy("jax")
+jnp = _jax_mod.numpy if _jax_mod is not None else _OptionalDependencyProxy("jax.numpy")
 
 
 # ---------------------------------------------------------------------------
 # Shared fixtures
 # ---------------------------------------------------------------------------
-
-X = Literal["x"]
-Y = Literal["y"]
-C = Literal["channel"]
-
-
-@dataclass
-class Variable2D:
-    """Simple 2-D dataclass for fixture creation."""
-
-    data: np.ndarray  # shape (x, y)
-    x: np.ndarray
-    y: np.ndarray
 
 
 def _make_multi_channel_da(

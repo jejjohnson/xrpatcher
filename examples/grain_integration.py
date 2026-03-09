@@ -25,25 +25,26 @@
 
 # %%
 # Install dependencies (Colab / first-run setup)
-try:
-    import grain
-except ImportError:
-    import subprocess
+import importlib.util
+import subprocess
+import sys
 
-    subprocess.run(
-        [
-            "pip",
-            "install",
-            "grain",
-            "jax",
-            "xrpatcher",
-            "xarray[io]",
-            "matplotlib",
-            "numpy",
-            "pooch",
-        ],
-        check=True,
-    )
+
+def _ensure_installed(package: str, pip_name: str | None = None) -> None:
+    if importlib.util.find_spec(package) is None:
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", pip_name or package],
+            check=True,
+        )
+
+
+_ensure_installed("grain")
+_ensure_installed("jax")
+_ensure_installed("xrpatcher")
+_ensure_installed("xarray")
+_ensure_installed("matplotlib")
+_ensure_installed("numpy")
+_ensure_installed("pooch")
 
 # %%
 import grain
