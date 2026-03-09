@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8](https://github.com/jejjohnson/xrpatcher/compare/v0.0.7...v0.0.8) (2026-03-09)
+
+
+### Documentation
+
+* add TorchGeo DataModule integration tutorial ([d293b31](https://github.com/jejjohnson/xrpatcher/commit/d293b3127863d8c5995f5b7010f639a6187e365c))
+* add torchgeo datamodule tutorial example ([aa07845](https://github.com/jejjohnson/xrpatcher/commit/aa078455e83a4fd5a43f1d0e7fb83f0573d807be))
+* fix torchgeo tutorial reconstruction mask ([f99bb4b](https://github.com/jejjohnson/xrpatcher/commit/f99bb4bd297c1bedbb2f0af0fd35f977d8ca66e6))
+* fix torchgeo tutorial y-axis coordinates ([232d130](https://github.com/jejjohnson/xrpatcher/commit/232d1300bff0c5ae8c2566f8b3a297695dc97e0c))
+
 ## [0.0.7](https://github.com/jejjohnson/xrpatcher/compare/v0.0.6...v0.0.7) (2026-03-07)
 
 
