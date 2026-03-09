@@ -51,6 +51,12 @@ docs = [
     "jupytext>=1.16",
     "ipykernel>=6.29",
 ]
+examples = [
+    "grain>=0.2",
+    "jax>=0.4",
+    "matplotlib>=3.8",
+    "pooch>=1.8",
+]
 
 [build-system]
 requires = ["hatchling"]
