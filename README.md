@@ -116,6 +116,10 @@ for label, patcher in [("uncached", uncached), ("cached", cached)]:
 
 > We demonstrate in this example how this tool can be used to create more complex dataloading like jointly training on separate regions
 
+**TorchGeo DataModule Integration** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jejjohnson/xrpatcher/blob/main/examples/torchgeo_datamodule_integration.py)
+
+> We demonstrate how to turn a TorchGeo batch into georeferenced `xarray` objects, patch them with `xrpatcher`, and reconstruct patch-wise outputs.
+
 ---
 
 ## 🛠️ Installation<a id="installation"></a>
