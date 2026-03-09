@@ -146,6 +146,23 @@ cd xrpatcher
 uv sync --all-groups
 ```
 
+### Releasing to PyPI
+
+Releases are managed by [release-please](https://github.com/googleapis/release-please).
+When a release PR is merged into `main`, release-please creates a GitHub Release, which
+triggers the `publish-pypi.yml` workflow that builds and publishes the package to PyPI
+using OIDC trusted publishing (no API tokens required).
+
+To enable publishing from a fork or a new environment, a maintainer with owner access on
+PyPI must add a trusted publisher with the following settings:
+
+| Field | Value |
+|---|---|
+| Owner | `jejjohnson` |
+| Repository | `xrpatcher` |
+| Workflow | `publish-pypi.yml` |
+| Environment | `pypi` |
+
 ---
 ## Inspiration
 
