@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.10](https://github.com/jejjohnson/xrpatcher/compare/v0.0.9...v0.0.10) (2026-03-09)
+
+
+### Features
+
+* dynamic badges, add caching example, verify PyPI publish workflow ([e5d6cf2](https://github.com/jejjohnson/xrpatcher/commit/e5d6cf2b1c9d05375bf1fa70a2e17d52eee5b2bb))
+* update badges, add caching example, and document publish workflow ([34328fe](https://github.com/jejjohnson/xrpatcher/commit/34328fee0ac1695b7f95baf23add9aa2c987adf8))
+
+
+### Bug Fixes
+
+* **examples:** warm cache before benchmark and use _patch variable name ([dfe1573](https://github.com/jejjohnson/xrpatcher/commit/dfe15737600c362fcebcfc7a307f9d84b4cc6f66))
+
 ## [0.0.9](https://github.com/jejjohnson/xrpatcher/compare/v0.0.8...v0.0.9) (2026-03-09)
 
 
